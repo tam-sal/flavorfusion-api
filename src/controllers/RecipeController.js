@@ -3,7 +3,7 @@ const { generateKey } = require('../config/config')
 const { Recipe, Diets } = require('../db')
 
 const generatedKey = generateKey()
-const limit = 100
+const limit = 45
 const baseUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${generatedKey}&addRecipeInformation=true&number=${limit}`
 
 const formatSignleRecipe = (recipe) => {
