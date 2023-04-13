@@ -8,7 +8,7 @@ const baseUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${gene
 
 const formatSignleRecipe = (recipe) => {
   let { diets } = recipe
-  //! TODO > Refactor to SET
+  // TODO > Refactor to SET
   if (diets.length) {
     if (recipe.vegetarian) diets = [...diets, 'vegetarian']
     if (recipe.vegan) diets = [...diets, 'vegan']
@@ -127,7 +127,35 @@ const createNewRecipe = async (title, image, summary, healthScore, steps, diet, 
   return newRecipe
 }
 
+const updateRecipeById = async (id, updatedRecipe) => {
 
+  try {
+
+    let foundRecipe = await getRecipeById(id)
+    if (!foundRecipe) throw Error(`Recipe ID: ${id} doesn't exist`)
+    if (Object.values(updatedRecipe) !== 6) throw Error('Object strucutre should match the original one')
+
+    if (foundRecipe.createdInDb) {
+      await foundRecipe.update(updatedRecipe)
+      const newDiets = await Diets.findAll({
+        where: {
+          name: updatedRecipe.diets
+        }
+      })
+      await foundRecipe.setDiets(newDiets)
+      foundRecipe = await foundRecipe
+      return foundRecipe
+    }
+    else {
+      throw Error('Data from API cannot be modified')
+    }
+  }
+
+  catch (error) {
+    return error.message
+  }
+
+}
 
 const deleteRecipeById = async (id) => {
   try {
@@ -157,7 +185,8 @@ module.exports = {
   getAllRecipes,
   getRecipeById,
   createNewRecipe,
-  deleteRecipeById
+  deleteRecipeById,
+  updateRecipeById
 }
 
 

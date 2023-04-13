@@ -6,7 +6,8 @@ const {
   getAllRecipes,
   getRecipeById,
   createNewRecipe,
-  deleteRecipeById
+  deleteRecipeById,
+  updateRecipeById
 } = require('../controllers/RecipeController')
 
 //* Get all recipes and by title
@@ -61,6 +62,24 @@ recipeRouter.post('/', async (req, res) => {
   catch (error) {
     return res.status(404).json({ error: error.message })
   }
+})
+
+//* Update recipe by id
+recipeRouter.put('/update/:id', async (req, res) => {
+  const { id } = req.params
+  const newRec = req.body
+
+  try {
+    const updatedRecipe = await updateRecipeById(id, newRec)
+    await updatedRecipe
+    if (updatedRecipe) return res.json({ msg: 'Recipe has been successfully updated', response: updatedRecipe })
+  }
+
+  catch (error) {
+    return res.status(404).json({ err: error.message })
+
+  }
+
 })
 
 //* Delete recipe by id
